@@ -36,16 +36,21 @@
   text-underline-offset: 0.1rem;
 }
 
-.header__text {
+.header__user {
+  color: var(--color-text-primary);
   padding: 4px 8px;
 }
 
-.header__logout-btn {
+.header__logout {
   border: none;
   background-color: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
   padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
-.header__logout-btn:hover {
+.header__logout:hover {
   opacity: 50%;
 }

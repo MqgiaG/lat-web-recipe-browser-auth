@@ -16,17 +16,37 @@ export const AuthContext = createContext<AuthContextValue>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(() => {
+    const storedUser = localStorage.getItem("current-user");
+
+    if (!storedUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(storedUser) as CurrentUser;
+    } catch {
+      localStorage.removeItem("current-user");
+      return null;
+    }
+  });
+
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return Boolean(localStorage.getItem("auth-token"));
+  });
 
   function login(token: string, user: CurrentUser) {
     localStorage.setItem("auth-token", token);
+    localStorage.setItem("current-user", JSON.stringify(user));
+
     setIsAuthenticated(true);
     setCurrentUser(user);
   }
 
   function logout() {
     localStorage.removeItem("auth-token");
+    localStorage.removeItem("current-user");
+
     setIsAuthenticated(false);
     setCurrentUser(null);
   }
