@@ -3,37 +3,23 @@ import { useNavigate } from "react-router-dom";
 import type { Recipe } from "../../types";
 import { categoryColors, categoryLabels } from "../../data/recipes";
 import { useAuth } from "../../contexts/AuthContext";
-import { toggleLike } from "../../utils/api";
 import "./RecipeCard.css";
 
 type Props = {
   recipe: Recipe;
-  onRecipeUpdate: (recipe: Recipe) => void;
+  onToggleFavorite: (id: string) => void;
 };
 
-function RecipeCard({ recipe, onRecipeUpdate }: Props) {
+function RecipeCard({ recipe, onToggleFavorite }: Props) {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
   const userId = currentUser?._id;
   const isFavorited = userId ? recipe.likes.includes(userId) : false;
 
-  async function handleToggleFavorite(
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) {
+  function handleFavoriteClick(event: React.MouseEvent<HTMLButtonElement>) {
     event.stopPropagation();
-
-    if (!userId) {
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const updatedRecipe = await toggleLike(recipe.id, userId);
-      onRecipeUpdate(updatedRecipe);
-    } catch (error) {
-      console.error("No se pudo actualizar el favorito:", error);
-    }
+    onToggleFavorite(recipe.id);
   }
 
   return (
@@ -48,7 +34,7 @@ function RecipeCard({ recipe, onRecipeUpdate }: Props) {
       <button
         type="button"
         className="recipe-card__favorite"
-        onClick={handleToggleFavorite}
+        onClick={handleFavoriteClick}
         aria-label={
           isFavorited ? "Quitar de favoritos" : "Añadir a favoritos"
         }

@@ -4,10 +4,10 @@ import { useAuth } from "../contexts/AuthContext";
 
 type Props = {
   recipes: Recipe[];
-  onRecipeUpdate: (recipe: Recipe) => void;
+  onToggleFavorite: (id: string) => void;
 };
 
-function FavoritesPage({ recipes, onRecipeUpdate }: Props) {
+function FavoritesPage({ recipes, onToggleFavorite }: Props) {
   const { currentUser } = useAuth();
 
   const userId = currentUser?._id;
@@ -25,7 +25,7 @@ function FavoritesPage({ recipes, onRecipeUpdate }: Props) {
       ) : (
         <RecipeList
           recipes={favorited}
-          onRecipeUpdate={onRecipeUpdate}
+          onToggleFavorite={onToggleFavorite}
         />
       )}
     </div>

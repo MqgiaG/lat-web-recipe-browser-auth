@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import type { Recipe } from "../../types";
-import { getRecipes } from "../../utils/api";
+import { getRecipes, toggleLike } from "../../utils/api";
+import { useAuth } from "../../contexts/AuthContext";
 
 import AppLayout from "../AppLayout/AppLayout";
-import ProtectedRoute from "../ProtectedRoute";
-import PublicRoute from "../PublicRoute";
+import {
+  ProtectedRoute,
+  PublicRoute,
+} from "../ProtectedRoute/ProtectedRoute";
 
 import HomePage from "../../pages/HomePage";
 import FavoritesPage from "../../pages/FavoritesPage";
@@ -21,6 +24,8 @@ function App() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     getRecipes()
@@ -42,6 +47,19 @@ function App() {
     );
   }
 
+  async function handleToggleFavorite(id: string) {
+    if (!currentUser) {
+      return;
+    }
+
+    try {
+      const updatedRecipe = await toggleLike(id, currentUser._id);
+      handleRecipeUpdate(updatedRecipe);
+    } catch (err) {
+      console.error("No se pudo actualizar el favorito:", err);
+    }
+  }
+
   function homeContent() {
     if (isLoading) {
       return <p className="app__loading">Cargando...</p>;
@@ -58,7 +76,7 @@ function App() {
     return (
       <HomePage
         recipes={recipes}
-        onRecipeUpdate={handleRecipeUpdate}
+        onToggleFavorite={handleToggleFavorite}
       />
     );
   }
@@ -79,7 +97,7 @@ function App() {
             element={
               <FavoritesPage
                 recipes={recipes}
-                onRecipeUpdate={handleRecipeUpdate}
+                onToggleFavorite={handleToggleFavorite}
               />
             }
           />

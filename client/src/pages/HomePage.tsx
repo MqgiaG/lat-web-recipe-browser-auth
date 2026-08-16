@@ -5,10 +5,10 @@ import RecipeList from "../components/RecipeList/RecipeList";
 
 type Props = {
   recipes: Recipe[];
-  onRecipeUpdate: (recipe: Recipe) => void;
+  onToggleFavorite: (id: string) => void;
 };
 
-function HomePage({ recipes, onRecipeUpdate }: Props) {
+function HomePage({ recipes, onToggleFavorite }: Props) {
   const [query, setQuery] = useState("");
 
   const filteredRecipes = recipes.filter((recipe) =>
@@ -29,7 +29,7 @@ function HomePage({ recipes, onRecipeUpdate }: Props) {
 
       <RecipeList
         recipes={filteredRecipes}
-        onRecipeUpdate={onRecipeUpdate}
+        onToggleFavorite={onToggleFavorite}
       />
     </div>
   );
